@@ -1,6 +1,8 @@
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 300;
+    font-style: normal;
     margin: 0;
     padding: 0;
     display: flex;
@@ -70,4 +72,10 @@ footer {
     overflow: hidden;
     background-color: black;
     border-radius: 8px;
+}
+
+h1 {
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 700;
+    font-style: normal;
 }

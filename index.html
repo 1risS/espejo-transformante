@@ -6,10 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Espejo transformante para Programación de entornos sensoriales 1</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.dom/1.1.0/p5.dom.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.dom/1.1.0/p5.dom.min.js"></script> -->
     <script src="https://tonejs.github.io/build/Tone.js"></script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark-reasonable.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Limelight&display=swap"
+        rel="stylesheet">
     <script src="sketch.js" defer></script>
     <script src="flow.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -49,27 +59,86 @@
                 <p>A continuación voy a explicar parte por parte todo el código.</p>
                 <!-- index.html -->
                 <h2><a href="https://github.com/1risS/espejo-transformante/blob/main/index.html">index.html</a></h2>
-                <p>En este archivo se importan las librerías necesarias para el proyecto, en este caso <a
-                        href="https://p5js.org/" target="blank">p5.js</a> y <a href="https://tonejs.github.io/"
-                        target="blank">tone.js</a>, y también los scripts en <a
-                        href="https://simple.wikipedia.org/wiki/JavaScript" target="blank"> JavaScript</a> que contienen
-                    la lógica de este programa.</p>
-                <img src="./assets/index-librerias.png" alt="index.html" style="height: 200px;" />
+                <p>En este archivo se importan las librerías necesarias para el proyecto, en este caso:</p>
+                <ul>
+                    <li> <a href="https://p5js.org/" target="blank">p5.js</a>,</li>
+                    <li><a href="https://tonejs.github.io/" target="blank">tone.js</a>,</li>
+                    <li><a href="https://highlightjs.org/" target="_blank">highlight.js</a>, y una función que debe
+                        ejecutarse para poder incluir snippets de código en la página,</li>
+                    <li>y también los scripts en <a href="https://simple.wikipedia.org/wiki/JavaScript" target="blank">
+                            JavaScript</a> que contienen
+                        la lógica de este programa.</li>
+                </ul>
+                <pre>
+                    <code class="language-html">&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;Espejo transformante para Programación de entornos sensoriales 1&lt;/title&gt;
+    &lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://tonejs.github.io/build/Tone.js&quot;&gt;&lt;/script&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css&quot;&gt;
+    &lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script&gt;hljs.highlightAll();&lt;/script&gt;
+    &lt;script src=&quot;sketch.js&quot; defer&gt;&lt;/script&gt;
+    &lt;script src=&quot;flow.js&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;</code>
+                </pre>
+                <!-- <img src="./assets/index-librerias.png" alt="index.html" style="height: 200px;" /> -->
 
-                <p>En este archivo, además, se determinan los elementos visuales en la página. A continuación pego una
-                    captura parcial del archivo.</p>
-                <img src="./assets/elementos-visuales.png" alt="index.html" style="height: 400px;" />
+                <p>En este archivo, además, se determinan los elementos visuales en la página. A continuación, muestro
+                    un fragmento del archivo.</p>
+                <pre class="html">
+                    <code>&lt;body&gt;
+&lt;div className=&quot;page-container&quot;&gt;
+&lt;header&gt;
+    &lt;h1&gt;Espejo Transformante&lt;/h1&gt;
+    &lt;h2&gt;Programación de Entornos Sensoriales I 2024&lt;/h2&gt;
+    &lt;h3&gt;Profesores Emiliano Causa y Matías Romero Costas&lt;/h3&gt;
+    &lt;h4&gt;Maestría en Tecnologías y Estéticas de las Artes Electrónicas UNTreF&lt;/h4&gt;
+&lt;/header&gt;
+
+&lt;div id=&quot;container&quot;&gt;
+    &lt;h2&gt;Sobre el proyecto&lt;/h2&gt;
+    &lt;p&gt;
+        Se trata de una experiencia en la que unx o más visitantes pueden
+        modificar la trayectoria de pelotitas en el espacio de la pantalla
+        gracias a la estimación del flujo óptico que permite calcular vectores
+        de movimiento de acuerdo a la diferencia de luminancia entre fotogramas.
+        Con estos valores se afecta la dirección de las pelotitas que se mueven.
+        La interacción se realiza a través de la cámara web de la computadora.
+        Finalmente, al rebotar en los bordes de la pantalla, las pelositas
+        disparan un sonido manejado con tone.js.
+    &lt;/p&gt;
+
+    &lt;!-- Container for the p5.js sketch --&gt;
+    &lt;div id=&quot;canvas-container&quot;&gt;&lt;/div&gt;
+
+    &lt;div className=&quot;explanation-container&quot;&gt;
+    &lt;etcétera...&quot;&gt;</code>
+                </pre>
+                <!-- <img src="./assets/elementos-visuales.png" alt="index.html" style="height: 400px;" /> -->
+
                 <!-- flow.js -->
                 <h2><a href="https://github.com/1risS/espejo-transformante/blob/main/flow.js"
                         target="_blank">flow.js</a></h2>
                 <h3>¿Qué hace la clase FlowZone?</h3>
-                <p>La clase FlowZone guarda información sobre un lugar específico en la imagen:
-
-                    <b>x</b> y <b>y</b>: Representan la posición del lugar en la imagen (un punto).
-                    <b>u</b> y <b>v</b>: Representan hacia dónde y con qué fuerza parece moverse ese punto (el
-                    "flujo" horizontal y vertical).
-                </p>
-                <img src="./assets/flow-zone.png" alt="FlowZone" style="height: 200px;" />
+                <p>La clase FlowZone guarda información sobre un lugar específico en la imagen</p>
+                <ul>
+                    <li><b>x</b> y <b>y</b>: Representan la posición del lugar en la imagen (un punto).</li>
+                    <li><b>u</b> y <b>v</b>: Representan hacia dónde y con qué fuerza parece moverse ese punto (el
+                        "flujo" horizontal y vertical).</li>
+                </ul>
+                <pre>
+                    <code class="language-javascript">class FlowZone {
+    constructor(x, y, u, v) {
+        this.x = x;
+        this.y = y;
+        this.u = u; // Horizontal flow
+        this.v = v; // Vertical flow
+    }
+}</code>
+                </pre>
+                <!-- <img src="./assets/flow-zone.png" alt="FlowZone" style="height: 200px;" /> -->
 
                 <h3>¿Qué hace la clase FlowCalculator?</h3>
                 <p>La clase FlowCalculator calcula el flujo óptico entre dos fotogramas consecutivos de un video
@@ -77,18 +146,64 @@
                     <a href="https://es.wikipedia.org/wiki/M%C3%A9todo_Lucas%E2%80%93Kanade" target="_blank">el
                         algoritmo de Lucas-Kanade.</a>
                 </p>
-                <img src="./assets/flow-calculator.png" alt="FlowCalculator" style="height: 600px;" />
-                <p>
-                    El programa se mueve en pasos (definidos por step, que es 8 por defecto).
-                    Esto significa que no analiza cada píxel uno por uno, sino que salta pequeños bloques de 8 en 8 para
-                    ser más eficiente.
-                    Para detectar movimiento se fija en dos imágenes (la anterior y la actual) y compara cómo han
-                    cambiado los colores de cada área.
-                    Para cada área calcula un promedio del color (lo convierte a blanco y negro para simplificar),
-                    ve si el color cambió y en qué dirección. Si el cambio supera el valor definido en la variable
-                    <b>score</b> (en el ejercicio actual este valor es 50),
-                    detecta movimiento y guarda los valores del mismo en la variable <b>this.zones</b>.
-                </p>
+                <ul>
+                    <li>El programa se mueve en pasos (definidos por step, que es 8 por defecto).</li>
+                    <li>Esto significa que no analiza cada píxel uno por uno, sino que salta pequeños bloques de 8 en 8
+                        para
+                        ser más eficiente.</li>
+                    <li>Para detectar movimiento se fija en dos imágenes (la anterior y la actual) y compara cómo han
+                        cambiado los colores de cada área.</li>
+                    <li>Para cada área calcula un promedio del color (lo convierte a blanco y negro para simplificar),
+                        ve si el color cambió y en qué dirección. Si el cambio supera el valor definido en la variable
+                        <b>score</b> (en el ejercicio actual este valor es 50),
+                        detecta movimiento y guarda los valores del mismo en la variable <b>this.zones</b>.
+                    </li>
+                </ul>
+                <pre>
+                    <code class="language-javascript">
+class FlowCalculator {
+    constructor(step = 8) {
+        this.step = step; // Resolution of the optical flow grid
+    }
+
+    calculate(oldPixels, newPixels, width, height) {
+        let zones = [];
+        let step = this.step;
+
+        for (let y = step; y < height - step; y += step) {
+            for (let x = step; x < width - step; x += step) {
+                let dx = 0, dy = 0;
+                let score = 0;
+
+                // Calculate flow vector
+                for (let j = -step; j <= step; j++) {
+                    for (let i = -step; i <= step; i++) {
+                        let oldIndex = ((y + j) * width + (x + i)) * 4;
+                        let newIndex = ((y + j) * width + (x + i)) * 4;
+
+                        let oldGray = (oldPixels[oldIndex] + oldPixels[oldIndex + 1] + oldPixels[oldIndex + 2]) / 3;
+                        let newGray = (newPixels[newIndex] + newPixels[newIndex + 1] + newPixels[newIndex + 2]) / 3;
+
+                        let diff = oldGray - newGray;
+                        dx += i * diff;
+                        dy += j * diff;
+                        score += Math.abs(diff);
+                    }
+                }
+
+                if (score > 50) {
+                    zones.push(new FlowZone(x, y, dx / score, dy / score));
+                }
+            }
+        }
+
+        this.zones = zones; // Store zones
+    }
+}
+                    </code>
+                </pre>
+                <!-- <img src="./assets/flow-calculator.png" alt="FlowCalculator" style="height: 600px;" /> -->
+
 
                 <!-- sketch.js -->
                 <h2><a href="https://github.com/1risS/espejo-transformante/blob/main/sketch.js"
@@ -120,7 +235,22 @@
                         para que suenen en los bordes del canvas cada vez que los impacta una "pelotita".</li>
                 </ul>
                 </p>
-                <img src="./assets/variables-globales.png" style="height: 200px;" />
+                <pre>
+                    <code class="language-javascript">
+var w = 900; // Width
+var h = 600; // Height
+var capture;
+var previousPixels;
+var flow;
+var step = 8;
+
+var balls = []; // Array of balls
+
+// Synthesizers for edges
+let leftSynth, rightSynth, topSynth, bottomSynth;
+                    </code>
+                </pre>
+                <!-- <img src="./assets/variables-globales.png" style="height: 200px;" /> -->
 
                 <h3>Función setup()</h3>
 
@@ -138,7 +268,41 @@
                     <li><b>Pelotitas:</b> Se generan 20 pelotitas en posiciones aleatorias dentro del canvas.</li>
                 </ul>
 
-                <img src="./assets/funcion-setup.png" style="height: 500px;" />
+                <pre>
+                    <code class="language-javascript">
+function setup() {
+    // Selecciona el contenedor donde se insertará el canvas
+    let canvas = createCanvas(w, h);
+    canvas.parent("canvas-container"); // Asocia el canvas al contenedor
+
+    capture = createCapture({
+        audio: false,
+        video: {
+            width: w,
+            height: h
+        }
+    }, function () {
+        console.log('Capture ready.');
+    });
+    capture.elt.setAttribute('playsinline', ''); // Para móviles
+    capture.hide(); // Oculta la captura por defecto
+    flow = new FlowCalculator(step);
+
+    // Crear sintetizadores
+    leftSynth = new Tone.Synth().toDestination();
+    rightSynth = new Tone.Synth().toDestination();
+    topSynth = new Tone.Synth().toDestination();
+    bottomSynth = new Tone.Synth().toDestination();
+
+    // Crear pelotas en posiciones aleatorias
+    for (let i = 0; i < 20; i++) {
+        balls.push(new Ball(random(width), random(height)));
+    }
+}                       
+                    </code>
+                </pre>
+
+                <!-- <img src="./assets/funcion-setup.png" style="height: 500px;" /> -->
                 </p>
 
                 <h3>Función draw()</h3>
@@ -160,22 +324,44 @@
                     <li>Las pelotitas rebotan en los bordes de la pantalla y generan sonidos cuando lo hacen.</li>
                 </ul>
 
-                <img src="./assets/funcion-draw.png" style="height: 400px;" />
+                <pre>
+                    <code class="language-javascript">
+function draw() {
+    capture.loadPixels();
+    if (capture.pixels.length > 0) {
+        if (previousPixels) {
+            flow.calculate(previousPixels, capture.pixels, capture.width, capture.height);
+        }
+        previousPixels = capture.pixels.slice();
+
+        // Display the video
+        image(capture, 0, 0, w, h);
+
+        // Update and draw all balls
+        for (let ball of balls) {
+            ball.update(flow);
+            ball.display();
+        }
+    }
+}
+                    </code>
+                </pre>
+
+                <!-- <img src="./assets/funcion-draw.png" style="height: 400px;" /> -->
 
                 <h3>Clase Ball (Pelotitas)</h3>
 
-                <p>Cada burbuja tiene un comportamiento único y está controlada por esta clase.</p>
-
-                <p>Cada pelotita tiene ciertas propiedades:</p>
+                <p>Cada pelotita tiene un comportamiento único controlado por esta clase, en virtud de la cual tienen
+                    ciertas propiedades:</p>
                 <ul>
-                    <li>Tiene una posición inicial (pos) y una velocidad (vel).</li>
-                    <li>Su tamaño es de 30 píxeles.</li>
-                    <li>Lleva un control de cuándo puede reproducir sonidos para evitar sonidos repetidos rápidamente.
+                    <li>Una posición inicial <b>pos</b> y una velocidad <b>vel</b>.</li>
+                    <li>Un tamaño es de 30 píxeles.</li>
+                    <li>Un control de cuándo puede reproducir sonidos para evitar sonidos repetidos rápidamente.
                     </li>
                 </ul>
                 <p>Cada pelotita se mueve del siguiente modo:</p>
                 <ul>
-                    <li>Cada pelota ajusta su velocidad según el movimiento detectado en la cámara (flujo óptico).</li>
+                    <li>Ajusta su velocidad según el movimiento detectado en la cámara (flujo óptico).</li>
                     <li>Su velocidad se reduce un poco en cada cuadro para evitar que se acelere demasiado.</li>
                 </ul>
 
@@ -189,18 +375,193 @@
                 <ul>
                     <li>La pelotita se muestra como un círculo semitransparente de color rosado.</li>
                 </ul>
-                <img src="./assets/clase-ball-0.png" style="height: 400px;" />
-                <img src="./assets/clase-ball-1.png" style="height: 400px;" />
+
+                <pre class="javascript">
+                    <code>
+class Ball {
+    constructor(x, y) {
+        this.pos = createVector(x, y); // Posición
+        this.vel = createVector(random(-2, 2), random(-2, 2)); // Velocidad inicial
+        this.size = 30; // Tamaño de la pelota
+        this.bounceSoundCooldown = { left: 0, right: 0, top: 0, bottom: 0 }; // Temporizadores para sonidos
+    }
+
+    update(flow) {
+        // Aplicar el flujo óptico a la velocidad
+        if (flow && flow.zones && flow.zones.length > 0) {
+            let closestFlow = this.getClosestFlowZone(flow.zones);
+            if (closestFlow) {
+                this.vel.x += closestFlow.u * 0.5; // Ajustar impacto del flujo
+                this.vel.y += closestFlow.v * 0.5;
+            }
+        }
+
+        // Agregar amortiguación para evitar velocidades altas
+        this.vel.mult(0.95);
+
+        // Limitar velocidad máxima
+        this.vel.limit(5);
+
+        // Actualizar posición
+        this.pos.add(this.vel);
+
+        // Manejar los bordes
+        this.handleEdges();
+    }
+
+    handleEdges() {
+        let now = Tone.now(); // Obtener el tiempo actual
+
+        if (this.pos.x <= 0) {
+            this.pos.x = 0;
+            this.vel.x *= -1;
+            if (now > this.bounceSoundCooldown.left) {
+                this.playSound(leftSynth, "C4");
+                this.bounceSoundCooldown.left = now + 0.2; // 200 ms de enfriamiento
+            }
+        } else if (this.pos.x >= width) {
+            this.pos.x = width;
+            this.vel.x *= -1;
+            if (now > this.bounceSoundCooldown.right) {
+                this.playSound(rightSynth, "E4");
+                this.bounceSoundCooldown.right = now + 0.2;
+            }
+        }
+
+        if (this.pos.y <= 0) {
+            this.pos.y = 0;
+            this.vel.y *= -1;
+            if (now > this.bounceSoundCooldown.top) {
+                this.playSound(topSynth, "G4");
+                this.bounceSoundCooldown.top = now + 0.2;
+            }
+        } else if (this.pos.y >= height) {
+            this.pos.y = height;
+            this.vel.y *= -1;
+            if (now > this.bounceSoundCooldown.bottom) {
+                this.playSound(bottomSynth, "B4");
+                this.bounceSoundCooldown.bottom = now + 0.2;
+            }
+        }
+    }
+
+    playSound(synth, note) {
+        try {
+            synth.triggerAttackRelease(note, "8n", Tone.now());
+        } catch (error) {
+            console.error("Audio playback error: ", error);
+        }
+    }
+
+    display() {
+        fill(255, 100, 200, 150); // Añadir transparencia para efecto de burbuja
+        noStroke();
+        ellipse(this.pos.x, this.pos.y, this.size);
+    }
+
+    getClosestFlowZone(zones) {
+        let closest = null;
+        let minDist = Infinity;
+
+        for (let zone of zones) {
+            let d = dist(this.pos.x, this.pos.y, zone.x, zone.y);
+            if (d < minDist) {
+                minDist = d;
+                closest = zone;
+            }
+        }
+
+        return closest;
+    }
+}                                               
+                    </code>
+                </pre>
+
+                <!-- <img src=" ./assets/clase-ball-0.png" style="height: 400px;" /> -->
+                <!-- <img src="./assets/clase-ball-1.png" style="height: 400px;" /> -->
 
 
                 <h2><a href="https://github.com/1risS/espejo-transformante/blob/main/style.css"
                         target="_blank">style.css</a></h2>
                 <p>
-                    En este archivo se definen los estilos de la página. Como no es lo central en el examen, no pegaré
-                    las capturas del archivo
-                    ya que se puede ver directamente en el repositorio haciendo click en el título.
+                    En este archivo se definen los estilos de la página.
                 </p>
+                <pre class="css">
+                    <code>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f0f0f0;
+}
 
+header {
+    width: 100%;
+    background: #333;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+}
+
+#container {
+    width: 80%;
+    margin: 20px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#canvas-container {
+    position: relative;
+    width: 100%;
+    height: 480px;
+    overflow: hidden;
+    background-color: black;
+    border-radius: 8px;
+}
+
+footer {
+    margin: 20px 0;
+    text-align: center;
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    #canvas-container {
+        height: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    #canvas-container {
+        height: 200px;
+    }
+}
+
+.page-container {
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.canvas-container {
+    width: 100%;
+    height: 480px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background-color: black;
+    border-radius: 8px;
+}
+                    </code>
+                </pre>
             </div>
 
             <footer>
