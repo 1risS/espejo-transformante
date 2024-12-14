@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Espejo transformante para Programación de entornos sensoriales 1</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.dom/1.1.0/p5.dom.min.js"></script> -->
     <script src="https://tonejs.github.io/build/Tone.js"></script>
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark-reasonable.min.css">
@@ -54,8 +53,9 @@
             <div id="canvas-container-0">
                 <div id="canvas-container"></div>
             </div>
-            <button id="toggle-sound">Sonido ON</button>
-
+            <div className="button-container">
+                <button id="toggle-sound">Sonido ON</button>
+            </div>
             <div className="explanation-container">
                 <h2>¿Cómo funciona?</h2>
                 <p> Para crear este ejercicio partí de <a href="https://editor.p5js.org/jeffThompson/sketches/DfsmBZ9O0"
@@ -92,7 +92,6 @@
     &lt;script src=&quot;flow.js&quot;&gt;&lt;/script&gt;
 &lt;/head&gt;</code>
                 </pre>
-                <!-- <img src="./assets/index-librerias.png" alt="index.html" style="height: 200px;" /> -->
 
                 <p>En este archivo, además, se determinan los elementos visuales en la página. A continuación, muestro
                     un fragmento del archivo.</p>
@@ -125,7 +124,6 @@
     &lt;div className=&quot;explanation-container&quot;&gt;
     &lt;etcétera...&quot;&gt;</code>
                 </pre>
-                <!-- <img src="./assets/elementos-visuales.png" alt="index.html" style="height: 400px;" /> -->
 
                 <!-- flow.js -->
                 <h2><a href="https://github.com/1risS/espejo-transformante/blob/main/flow.js"
@@ -142,12 +140,11 @@
     constructor(x, y, u, v) {
         this.x = x;
         this.y = y;
-        this.u = u; // Horizontal flow
-        this.v = v; // Vertical flow
+        this.u = u; // Flujo horizontal
+        this.v = v; // Flujo vertical
     }
 }</code>
                 </pre>
-                <!-- <img src="./assets/flow-zone.png" alt="FlowZone" style="height: 200px;" /> -->
 
                 <h3>¿Qué hace la clase FlowCalculator?</h3>
                 <p>La clase FlowCalculator calcula el flujo óptico entre dos fotogramas consecutivos de un video
@@ -164,15 +161,19 @@
                         cambiado los colores de cada área.</li>
                     <li>Para cada área calcula un promedio del color (lo convierte a blanco y negro para simplificar),
                         ve si el color cambió y en qué dirección. Si el cambio supera el valor definido en la variable
-                        <b>score</b> (en el ejercicio actual este valor es 50),
+                        <b>score</b>,
                         detecta movimiento y guarda los valores del mismo en la variable <b>this.zones</b>.
                     </li>
+                    <li><b>Nota:</b> en el ejercicio actual desde <b>sketch.js</b> ajusté el valor de step a 32 y cambié
+                        una condición tal que si <b>score</b> es mayor que 100000, se determina una zona de flujo. Esto
+                        permite afinar la precisión
+                        de lo que el programa considera movimiento y lograr la respuesta deseada en las pelotitas. </li>
                 </ul>
                 <pre>
                     <code class="language-javascript">
 class FlowCalculator {
     constructor(step = 8) {
-        this.step = step; // Resolution of the optical flow grid
+        this.step = step; // "Resolución" de la "grilla" del flujo óptico. Se puede ajustar desde sketch.js. 
     }
 
     calculate(oldPixels, newPixels, width, height) {
@@ -184,7 +185,7 @@ class FlowCalculator {
                 let dx = 0, dy = 0;
                 let score = 0;
 
-                // Calculate flow vector
+                // Calcular el vector de flujo
                 for (let j = -step; j <= step; j++) {
                     for (let i = -step; i <= step; i++) {
                         let oldIndex = ((y + j) * width + (x + i)) * 4;
@@ -199,19 +200,18 @@ class FlowCalculator {
                         score += Math.abs(diff);
                     }
                 }
-
-                if (score > 50) {
+                // esta condición permite ajustar la sensibilidad de la detección de movimiento.
+                if (score > 100000) { 
                     zones.push(new FlowZone(x, y, dx / score, dy / score));
                 }
             }
         }
 
-        this.zones = zones; // Store zones
+        this.zones = zones; // Almacenar zonas
     }
 }
                     </code>
                 </pre>
-                <!-- <img src="./assets/flow-calculator.png" alt="FlowCalculator" style="height: 600px;" /> -->
 
 
                 <!-- sketch.js -->
@@ -246,20 +246,21 @@ class FlowCalculator {
                 </p>
                 <pre>
                     <code class="language-javascript">
-var w = 900; // Width
-var h = 600; // Height
+var w = 900;
+var h = 600;
 var capture;
 var previousPixels;
 var flow;
-var step = 8;
+var step = 32;
 
-var balls = []; // Array of balls
+var balls = [];
 
-// Synthesizers for edges
+// Sintetiadores Tone.js para los bordes del canvas
 let leftSynth, rightSynth, topSynth, bottomSynth;
+
+let soundEnabled = false; // Variable para habilitar o deshabilitar el sonido
                     </code>
                 </pre>
-                <!-- <img src="./assets/variables-globales.png" style="height: 200px;" /> -->
 
                 <h3>Función setup()</h3>
 
@@ -284,6 +285,7 @@ function setup() {
     let canvas = createCanvas(w, h);
     canvas.parent("canvas-container"); // Asocia el canvas al contenedor
 
+    // Inicializar la captura de video desde la cámara
     capture = createCapture({
         audio: false,
         video: {
@@ -293,11 +295,12 @@ function setup() {
     }, function () {
         console.log('Capture ready.');
     });
-    capture.elt.setAttribute('playsinline', ''); // Para móviles
-    capture.hide(); // Oculta la captura por defecto
-    flow = new FlowCalculator(step);
+    capture.elt.setAttribute('playsinline', ''); // Para que funcione correctamente en dispositivos móviles
+    capture.hide(); // Oculta la vista directa del video para procesarlo en el canvas
 
-    // Crear sintetizadores
+    flow = new FlowCalculator(step); // Inicializar el calculador de flujo óptico
+
+    // Crear sintetizadores para cada borde
     leftSynth = new Tone.Synth().toDestination();
     rightSynth = new Tone.Synth().toDestination();
     topSynth = new Tone.Synth().toDestination();
@@ -307,11 +310,14 @@ function setup() {
     for (let i = 0; i < 20; i++) {
         balls.push(new Ball(random(width), random(height)));
     }
-}                       
+
+    // Añade event listener para el botón de sonido
+    let toggleSoundButton = document.getElementById("toggle-sound");
+    toggleSoundButton.addEventListener("click", toggleSound);
+}
                     </code>
                 </pre>
 
-                <!-- <img src="./assets/funcion-setup.png" style="height: 500px;" /> -->
                 </p>
 
                 <h3>Función draw()</h3>
@@ -325,6 +331,7 @@ function setup() {
                 <p>Al mostrar el video:</p>
                 <ul>
                     <li>Se dibuja el video capturado en el canvas para que sea visible.</li>
+                    <li>Se dibujan líneas rojas para mostrar el flujo óptico.</li>
                 </ul>
 
                 <p>Al actualizar las pelotitas:</p>
@@ -337,16 +344,27 @@ function setup() {
                     <code class="language-javascript">
 function draw() {
     capture.loadPixels();
+    // Si hay un fotograma previo, calcular el flujo óptico
     if (capture.pixels.length > 0) {
         if (previousPixels) {
             flow.calculate(previousPixels, capture.pixels, capture.width, capture.height);
         }
-        previousPixels = capture.pixels.slice();
+        previousPixels = capture.pixels.slice(); // Guardar el fotograma actual como el previo
 
-        // Display the video
+        // Dibujar el video capturado en el canvas
         image(capture, 0, 0, w, h);
 
-        // Update and draw all balls
+        // Dibujar los vectores del flujo óptico
+        if (flow && flow.zones && flow.zones.length > 0) {
+            for (let zone of flow.zones) {
+                stroke(255, 0, 0);
+                strokeWeight(2);
+                fill(255, 0, 0);
+                line(zone.x, zone.y, zone.x + zone.u * 1, zone.y + zone.v * 1);
+            }
+        }
+
+        // Actualizar y dibujar todas las pelotas
         for (let ball of balls) {
             ball.update(flow);
             ball.display();
@@ -355,8 +373,6 @@ function draw() {
 }
                     </code>
                 </pre>
-
-                <!-- <img src="./assets/funcion-draw.png" style="height: 400px;" /> -->
 
                 <h3>Clase Ball (Pelotitas)</h3>
 
@@ -372,6 +388,8 @@ function draw() {
                 <ul>
                     <li>Ajusta su velocidad según el movimiento detectado en la cámara (flujo óptico).</li>
                     <li>Su velocidad se reduce un poco en cada cuadro para evitar que se acelere demasiado.</li>
+                    <li>Las pelotas se mueven libremente, pero su velocidad se reduce con el tiempo gracias
+                        a un "amortiguador" que evita que se muevan demasiado rápido (dando sensación de fricción).</li>
                 </ul>
 
                 <p>Cuando una pelotita toca un borde pasa lo siguiente:</p>
@@ -379,6 +397,8 @@ function draw() {
                     <li>Rebota en él, cambiando la dirección de su movimiento.</li>
                     <li>Al chocar con un borde, genera un sonido específico dependiendo del lado (izquierda, derecha,
                         arriba o abajo).</li>
+                    <li>Un temporizador asegura que no se reproduzca el mismo sonido muchas veces seguidas si la pelota
+                        golpea el mismo borde rápidamente.</li>
                 </ul>
                 <p>Finalmente:</p>
                 <ul>
@@ -389,92 +409,101 @@ function draw() {
                     <code>
 class Ball {
     constructor(x, y) {
-        this.pos = createVector(x, y); // Posición
-        this.vel = createVector(random(-2, 2), random(-2, 2)); // Velocidad inicial
+        this.pos = createVector(x, y); // Posicion inicial
+        this.vel = createVector(random(-2, 2), random(-2, 2)); // Velocidad inicial aleatoria
         this.size = 30; // Tamaño de la pelota
-        this.bounceSoundCooldown = { left: 0, right: 0, top: 0, bottom: 0 }; // Temporizadores para sonidos
+        this.bounceSoundCooldown = { left: 0, right: 0, top: 0, bottom: 0 }; // Temporizadores para evitar que el sonido se reproduzca demasiado seguido
     }
 
+    // Actualiza la posición y velocidad de la pelota
     update(flow) {
-        // Aplicar el flujo óptico a la velocidad
+        // Si hay datos de flujo óptico, aplicar los vectores de movimiento más cercanos a las pelotas
         if (flow && flow.zones && flow.zones.length > 0) {
             let closestFlow = this.getClosestFlowZone(flow.zones);
             if (closestFlow) {
-                this.vel.x += closestFlow.u * 0.5; // Ajustar impacto del flujo
-                this.vel.y += closestFlow.v * 0.5;
+                // Acá se puede ajustar el impacto del flujo en la velocidad
+                this.vel.x += closestFlow.u * 0.5; //Suma el vector de flujo horizontal a la velocidad x de la pelota. 
+                this.vel.y += closestFlow.v * 0.5; //Suma el vector de flujo vertical a la velocidad y de la pelota
             }
         }
 
-        // Agregar amortiguación para evitar velocidades altas
+        // Agregar amortiguación para reducir gradualmente la velocidad
         this.vel.mult(0.95);
 
-        // Limitar velocidad máxima
-        this.vel.limit(5);
 
-        // Actualizar posición
+        // Actualizar la posición de la pelota
         this.pos.add(this.vel);
 
-        // Manejar los bordes
+        // Manejar las colisiones con los bordes
         this.handleEdges();
     }
 
+    // Maneja los rebotes de la pelota contra los bordes y reproduce sonidos si está activado
     handleEdges() {
-        let now = Tone.now(); // Obtener el tiempo actual
+        let now = Tone.now(); // Obtener el tiempo actual desde Tone.js
 
+        // Bordes izquierdo y derecho
         if (this.pos.x <= 0) {
             this.pos.x = 0;
             this.vel.x *= -1;
             if (now > this.bounceSoundCooldown.left) {
-                this.playSound(leftSynth, "C4");
-                this.bounceSoundCooldown.left = now + 0.2; // 200 ms de enfriamiento
+                this.playSound(leftSynth, "C4"); // Nota al rebotar en el borde izquierdo
+                this.bounceSoundCooldown.left = now + 0.2; // Cooldown de 200ms
             }
         } else if (this.pos.x >= width) {
             this.pos.x = width;
             this.vel.x *= -1;
             if (now > this.bounceSoundCooldown.right) {
-                this.playSound(rightSynth, "E4");
+                this.playSound(rightSynth, "E4"); // Nota al rebotar en el borde derecho
                 this.bounceSoundCooldown.right = now + 0.2;
             }
         }
 
+        // Bordes superior e inferior
         if (this.pos.y <= 0) {
             this.pos.y = 0;
             this.vel.y *= -1;
             if (now > this.bounceSoundCooldown.top) {
-                this.playSound(topSynth, "G4");
+                this.playSound(topSynth, "G4");  // Nota al rebotar en el borde superior
                 this.bounceSoundCooldown.top = now + 0.2;
             }
         } else if (this.pos.y >= height) {
             this.pos.y = height;
             this.vel.y *= -1;
             if (now > this.bounceSoundCooldown.bottom) {
-                this.playSound(bottomSynth, "B4");
+                this.playSound(bottomSynth, "B4"); // Nota al rebotar en el borde inferior
                 this.bounceSoundCooldown.bottom = now + 0.2;
             }
         }
     }
 
+    // Reproduce un sonido con el sintetizador indicado
     playSound(synth, note) {
-        try {
-            synth.triggerAttackRelease(note, "8n", Tone.now());
-        } catch (error) {
-            console.error("Audio playback error: ", error);
+        if (soundEnabled) {// Solo reproducir si el sonido está activado
+            try {
+                synth.triggerAttackRelease(note, "8n", Tone.now());
+            } catch (error) {
+                console.error("Audio playback error: ", error);
+            }
         }
     }
 
+    // Dibuja la pelota en el canvas
     display() {
-        fill(255, 100, 200, 150); // Añadir transparencia para efecto de burbuja
+        fill(255, 100, 200, 150); // Color con transparencia para efecto de burbuja
         noStroke();
         ellipse(this.pos.x, this.pos.y, this.size);
     }
 
+    // Encuentra la zona de flujo más cercana a la posición de la pelota
     getClosestFlowZone(zones) {
         let closest = null;
         let minDist = Infinity;
+        let maxDist = 100;
 
         for (let zone of zones) {
             let d = dist(this.pos.x, this.pos.y, zone.x, zone.y);
-            if (d < minDist) {
+            if (d < minDist && d < maxDist) {
                 minDist = d;
                 closest = zone;
             }
@@ -482,13 +511,9 @@ class Ball {
 
         return closest;
     }
-}                                               
+}                              
                     </code>
                 </pre>
-
-                <!-- <img src=" ./assets/clase-ball-0.png" style="height: 400px;" /> -->
-                <!-- <img src="./assets/clase-ball-1.png" style="height: 400px;" /> -->
-
 
                 <h2><a href="https://github.com/1risS/espejo-transformante/blob/main/style.css"
                         target="_blank">style.css</a></h2>

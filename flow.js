@@ -2,14 +2,14 @@ class FlowZone {
     constructor(x, y, u, v) {
         this.x = x;
         this.y = y;
-        this.u = u; // Horizontal flow
-        this.v = v; // Vertical flow
+        this.u = u; // Flujo horizontal
+        this.v = v; // Flujo vertical
     }
 }
 
 class FlowCalculator {
     constructor(step = 8) {
-        this.step = step; // Resolution of the optical flow grid
+        this.step = step; // "Resolución" de la "grilla" del flujo óptico. Se puede ajustar desde sketch.js. 
     }
 
     calculate(oldPixels, newPixels, width, height) {
@@ -21,7 +21,7 @@ class FlowCalculator {
                 let dx = 0, dy = 0;
                 let score = 0;
 
-                // Calculate flow vector
+                // Calcular el vector de flujo
                 for (let j = -step; j <= step; j++) {
                     for (let i = -step; i <= step; i++) {
                         let oldIndex = ((y + j) * width + (x + i)) * 4;
@@ -36,13 +36,13 @@ class FlowCalculator {
                         score += Math.abs(diff);
                     }
                 }
-
-                if (score > 50) {
+                // esta condición permite ajustar la sensibilidad de la detección de movimiento.
+                if (score > 100000) {
                     zones.push(new FlowZone(x, y, dx / score, dy / score));
                 }
             }
         }
 
-        this.zones = zones; // Store zones
+        this.zones = zones; // Almacenar zonas
     }
 }
